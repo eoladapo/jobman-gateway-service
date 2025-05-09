@@ -83,7 +83,7 @@ export class GatewayServer {
   }
 
   private errorHandler(app: Application): void {
-    app.use('*', (req: Request, res: Response, next: NextFunction) => {
+    app.use(/('*')/, (req: Request, res: Response, next: NextFunction) => {
       const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
       log.log('error', `${fullUrl} endpoint does not exist.`, '');
       res.status(StatusCodes.NOT_FOUND).json({ message: 'The endpoint called does not exist.' });
