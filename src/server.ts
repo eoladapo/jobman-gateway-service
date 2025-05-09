@@ -9,7 +9,7 @@ import compression from 'compression';
 import cookieSession from 'cookie-session';
 import { Application, NextFunction, Request, Response, json, urlencoded } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { elasticSearch } from '@gateway/elasticsearch';
+import { checkConnection } from '@gateway/elasticsearch';
 import { appRoutes } from '@gateway/routes';
 import { axiosAuthInstance } from '@gateway/services/api/auth.service';
 
@@ -75,7 +75,7 @@ export class GatewayServer {
   }
 
   private startElasticSearch(): void {
-    elasticSearch.checkConnection();
+    checkConnection();
   }
 
   private routesMiddleware(app: Application): void {
