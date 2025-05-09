@@ -16,7 +16,7 @@ import { axiosAuthInstance } from '@gateway/services/api/auth.service';
 const SERVER_PORT = 4000;
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'apiGatewayServer', 'debug');
 
-export class gatewayServer {
+export class GatewayServer {
   private app: Application;
 
   constructor(app: Application) {
