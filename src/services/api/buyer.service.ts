@@ -26,4 +26,4 @@ class BuyerService {
   }
 }
 
-export const buyer: BuyerService = new BuyerService();
+export const buyerService: BuyerService = new BuyerService();
