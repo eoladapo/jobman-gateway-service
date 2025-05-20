@@ -14,6 +14,7 @@ import { appRoutes } from '@gateway/routes';
 import { axiosAuthInstance } from '@gateway/services/api/auth.service';
 import { axiosBuyerInstance } from '@gateway/services/api/buyer.service';
 import { axiosSellerInstance } from '@gateway/services/api/seller.service';
+import { axiosGigInstance } from './services/api/gig.service';
 
 const SERVER_PORT = 4000;
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'apiGatewayServer', 'debug');
@@ -61,7 +62,7 @@ export class GatewayServer {
         axiosAuthInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`;
         axiosBuyerInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`;
         axiosSellerInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`;
-        // axiosGigInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`;
+        axiosGigInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`;
         // axiosMessageInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`;
         // axiosOrderInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`;
         // axiosReviewInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`;
