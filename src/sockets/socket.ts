@@ -1,6 +1,12 @@
+import { winstonLogger } from '@eoladapo/jobman-shared';
+import { config } from '@gateway/config';
 import { GatewayCache } from '@gateway/redis/gateway.cache';
 import { Server, Socket } from 'socket.io';
+import { io, Socket as SocketClient } from 'socket.io-client';
+import { Logger } from 'winston';
 
+const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'gatewaySocket', 'debug');
+let chatSocketClient: SocketClient;
 export class SocketIOAppHandler {
   private io: Server;
   private gatewayCache: GatewayCache;
@@ -8,9 +14,11 @@ export class SocketIOAppHandler {
   constructor(io: Server) {
     this.io = io;
     this.gatewayCache = new GatewayCache();
+    this.chatSocketServiceIOConnections();
   }
 
   public listen(): void {
+    this.chatSocketServiceIOConnections();
     this.io.on('connection', async (socket: Socket) => {
       socket.on('getLoggedInUser', async () => {
         const response: string[] = await this.gatewayCache.getLoggedInUserFromCache('loggedInUsers');
@@ -30,6 +38,27 @@ export class SocketIOAppHandler {
       socket.on('category', async (category: string, username: string) => {
         await this.gatewayCache.saveUserSelectedCategory(`selectedCategories:${username}`, category);
       });
+    });
+  }
+
+  private chatSocketServiceIOConnections(): void {
+    chatSocketClient = io(`${config.MESSAGE_BASE_URL}`, {
+      transports: ['websocket', 'polling'],
+      secure: true
+    });
+
+    chatSocketClient.on('connect', () => {
+      log.info('GatewayService Chat Service socket connected');
+    });
+
+    chatSocketClient.on('disconnect', (reason: SocketClient.DisconnectReason) => {
+      log.log('error', `GatewayService Chat Service socket disconnected: ${reason}`);
+      chatSocketClient.connect();
+    });
+
+    chatSocketClient.on('connect_error', (error: Error) => {
+      log.log('error', `GatewayService Chat Service socket connection error: ${error}`);
+      chatSocketClient.connect();
     });
   }
 }
