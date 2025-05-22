@@ -1,4 +1,4 @@
-import { winstonLogger } from '@eoladapo/jobman-shared';
+import { IMessageDocument, winstonLogger } from '@eoladapo/jobman-shared';
 import { config } from '@gateway/config';
 import { GatewayCache } from '@gateway/redis/gateway.cache';
 import { Server, Socket } from 'socket.io';
@@ -48,17 +48,22 @@ export class SocketIOAppHandler {
     });
 
     chatSocketClient.on('connect', () => {
-      log.info('GatewayService Chat Service socket connected');
+      log.info('ChatService socket connected');
     });
 
     chatSocketClient.on('disconnect', (reason: SocketClient.DisconnectReason) => {
-      log.log('error', `GatewayService Chat Service socket disconnected: ${reason}`);
+      log.log('error', `ChatSocket disconnected: ${reason}`);
       chatSocketClient.connect();
     });
 
     chatSocketClient.on('connect_error', (error: Error) => {
-      log.log('error', `GatewayService Chat Service socket connection error: ${error}`);
+      log.log('error', `ChatService socket connection error: ${error}`);
       chatSocketClient.connect();
+    });
+
+    // custom event
+    chatSocketClient.on('message received', (data: IMessageDocument) => {
+      this.io.emit('message received', data);
     });
   }
 }
