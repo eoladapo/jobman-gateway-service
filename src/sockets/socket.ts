@@ -65,5 +65,9 @@ export class SocketIOAppHandler {
     chatSocketClient.on('message received', (data: IMessageDocument) => {
       this.io.emit('message received', data);
     });
+
+    chatSocketClient.on('message updated', (data: IMessageDocument) => {
+      this.io.emit('message received', data);
+    });
   }
 }
