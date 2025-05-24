@@ -7,6 +7,7 @@ import { Logger } from 'winston';
 
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'gatewaySocket', 'debug');
 let chatSocketClient: SocketClient;
+let orderSocketClient: SocketClient;
 export class SocketIOAppHandler {
   private io: Server;
   private gatewayCache: GatewayCache;
@@ -15,10 +16,12 @@ export class SocketIOAppHandler {
     this.io = io;
     this.gatewayCache = new GatewayCache();
     this.chatSocketServiceIOConnections();
+    this.orderSocketServiceIOConnections();
   }
 
   public listen(): void {
     this.chatSocketServiceIOConnections();
+    this.orderSocketServiceIOConnections();
     this.io.on('connection', async (socket: Socket) => {
       socket.on('getLoggedInUser', async () => {
         const response: string[] = await this.gatewayCache.getLoggedInUserFromCache('loggedInUsers');
@@ -68,6 +71,27 @@ export class SocketIOAppHandler {
 
     chatSocketClient.on('message updated', (data: IMessageDocument) => {
       this.io.emit('message received', data);
+    });
+  }
+
+  private orderSocketServiceIOConnections(): void {
+    orderSocketClient = io(`${config.ORDER_BASE_URL}`, {
+      transports: ['websocket', 'polling'],
+      secure: true
+    });
+
+    orderSocketClient.on('connect', () => {
+      log.info('OrderService socket connected');
+    });
+
+    orderSocketClient.on('disconnect', (reason: SocketClient.DisconnectReason) => {
+      log.log('error', `OrderSocket disconnected: ${reason}`);
+      orderSocketClient.connect();
+    });
+
+    orderSocketClient.on('connect_error', (error: Error) => {
+      log.log('error', `orderService socket connection error: ${error}`);
+      chatSocketClient.connect();
     });
   }
 }
