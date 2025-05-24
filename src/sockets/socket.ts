@@ -1,4 +1,4 @@
-import { IMessageDocument, winstonLogger } from '@eoladapo/jobman-shared';
+import { IMessageDocument, IOrderDocument, IOrderNotifcation, winstonLogger } from '@eoladapo/jobman-shared';
 import { config } from '@gateway/config';
 import { GatewayCache } from '@gateway/redis/gateway.cache';
 import { Server, Socket } from 'socket.io';
@@ -92,6 +92,11 @@ export class SocketIOAppHandler {
     orderSocketClient.on('connect_error', (error: Error) => {
       log.log('error', `orderService socket connection error: ${error}`);
       chatSocketClient.connect();
+    });
+
+    // custom event
+    orderSocketClient.on('order notification', (order: IOrderDocument, notification: IOrderNotifcation) => {
+      this.io.emit('order notification', order, notification);
     });
   }
 }
