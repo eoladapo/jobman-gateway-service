@@ -42,7 +42,7 @@ export class GatewayCache {
     }
   }
 
-  public async getLoggedInUserFromCache(key: string): Promise<string[]> {
+  public async getLoggedInUsersFromCache(key: string): Promise<string[]> {
     try {
       if (!this.client.isOpen) {
         await this.client.connect();
@@ -50,7 +50,7 @@ export class GatewayCache {
       const response: string[] = await this.client.LRANGE(key, 0, -1);
       return response;
     } catch (error) {
-      log.log('error', 'GatewayService getLoggedInUserFromCache() method error: ', error);
+      log.log('error', 'GatewayService getLoggedInUsersFromCache() method error: ', error);
       return [];
     }
   }

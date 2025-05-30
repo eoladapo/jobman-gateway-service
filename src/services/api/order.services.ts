@@ -1,12 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
 import { AxiosService } from '@gateway/services/axios';
 import { IExtendedDelivery, IOrderDocument, IOrderMessage } from '@eoladapo/jobman-shared';
+import { config } from '@gateway/config';
 
 export let axiosOrderInstance: ReturnType<typeof axios.create>;
 
 class OrderService {
   constructor() {
-    const axiosService: AxiosService = new AxiosService(`${process.env.ORDER_SERVICE_URL}/api/v1/order`, 'order');
+    const axiosService: AxiosService = new AxiosService(`${config.ORDER_BASE_URL}/api/v1/order`, 'order');
     axiosOrderInstance = axiosService.axios;
   }
 

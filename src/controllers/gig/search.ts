@@ -1,4 +1,3 @@
-import { authService } from '@gateway/services/api/auth.service';
 import { gigService } from '@gateway/services/api/gig.service';
 import { AxiosResponse } from 'axios';
 import { Request, Response } from 'express';

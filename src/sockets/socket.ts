@@ -24,7 +24,7 @@ export class SocketIOAppHandler {
     this.orderSocketServiceIOConnections();
     this.io.on('connection', async (socket: Socket) => {
       socket.on('getLoggedInUser', async () => {
-        const response: string[] = await this.gatewayCache.getLoggedInUserFromCache('loggedInUsers');
+        const response: string[] = await this.gatewayCache.getLoggedInUsersFromCache('loggedInUsers');
         this.io.emit('online', response);
       });
 
